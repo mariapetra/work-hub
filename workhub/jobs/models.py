@@ -10,6 +10,6 @@ class Jobs(models.Model):
     # end_date = models.DateField()
     contract_type = models.TextField()
     manager = models.CharField(max_length=200)
-    moanage_email = models.EmailField()
+    manager_email = models.EmailField()
     salary = models.IntegerField()
     notes = models.TextField()

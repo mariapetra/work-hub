@@ -1,5 +1,5 @@
 from rest_framework import serializers
-# from .models import Jobs
+from .models import Jobs
 
 
 class JobsSerializer(serializers.Serializer):
@@ -12,6 +12,9 @@ class JobsSerializer(serializers.Serializer):
     # end_date = serializers.DateField()
     contract_type = serializers.CharField(max_length=200)
     manager = serializers.CharField(max_length=200)
-    moanage_email = serializers.EmailField()
+    manager_email = serializers.EmailField()
     salary = serializers.IntegerField()
     notes = serializers.CharField(max_length=None)
+
+    def create(self, validated_data):
+        return Jobs.objects.create(**validated_data)
