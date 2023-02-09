@@ -7,8 +7,6 @@ class Jobs(models.Model):
     description = models.TextField()
     location = models.TextField()
     hours = models.IntegerField()
-    # start_date = models.DateField()
-    # end_date = models.DateField()
     contract_type = models.TextField()
     manager = models.CharField(max_length=200)
     manager_email = models.EmailField()

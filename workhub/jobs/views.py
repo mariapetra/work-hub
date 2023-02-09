@@ -1,9 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Jobs
-from .serializers import JobsSerializer
+from .serializers import JobsSerializer, JobsDetailSerializer
 from django.http import Http404
-from rest_framework import status
+from rest_framework import status, permissions
+from .permissions import IsOwnerOrReadOnly
 
 
 class JobsList(APIView):
@@ -18,7 +19,7 @@ class JobsList(APIView):
     def post(self, request):
         serializer = JobsSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(owner=request.user)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
@@ -31,9 +32,15 @@ class JobsList(APIView):
 
 class JobsDetail(APIView):
 
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly
+                          ]
+
     def get_object(self, pk):
         try:
-            return Jobs.objects.get(pk=pk)
+            jobs = Jobs.objects.get(pk=pk)
+            self.check_object_permissions(self.request, jobs)
+            return jobs
         except Jobs.DoesNotExist:
             raise Http404
 
@@ -41,6 +48,17 @@ class JobsDetail(APIView):
         jobs = self.get_object(pk)
         serializer = JobsSerializer(jobs)
         return Response(serializer.data)
+
+    def put(self, request, pk):
+        jobs = self.get_object(pk)
+        data = request.data
+        serializer = JobsDetailSerializer(
+            instance=jobs,
+            data=data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
 
 # {"company":"test",
 # "description":"test",
