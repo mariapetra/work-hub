@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Jobs
 
 
-class JobsSerializer(serializers.Serializer):
+class JobsSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     company = serializers.CharField(max_length=200)
     description = serializers.CharField(max_length=None)
